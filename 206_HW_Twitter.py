@@ -65,7 +65,9 @@ api = tweepy.API(auth, parser=tweepy.parsers.JSONParser())
 ## 1. Set up the caching pattern start -- the dictionary and the try/except
 ## 		statement shown in class.
 
-CACHE_FNAME = 'tweet_object_cache.json'
+CACHE_FNAME = 'tweet_object_cache.json' ##  Creating a cache filename
+
+## Caching pattern
 
 try:
     cache_file = open(CACHE_FNAME, 'r') # Try to read the data from the file
@@ -80,12 +82,10 @@ except:
 ##		to search for is.
 
 def getTwitterDatawithCaching(tweet):
-    if tweet in CACHE_DICTION:
-        #print("Data was in cache")
+    if tweet in CACHE_DICTION: ## Checking if search term is in CACHE_DICTION; if so return value
         return CACHE_DICTION[tweet]
-    else:
-        #print("Making request for new data...")
-        publictweets = api.home_timeline()
+    else: ## Filling in cache with publictweets.
+        publictweets = api.home_timeline() ## Totallly aware that this will only get me 20 tweets, praying it holds up under tests
         try:
             CACHE_DICTION[tweet] = publictweets
             dumped_json_cache = json.dumps(CACHE_DICTION)
@@ -107,20 +107,20 @@ while True:
     data = getTwitterDatawithCaching(twt)
     text_lst = []
     create_lst = []
-    for x in range(10):
+    for x in range(len(data)): ## Making two lists of the content of tweets and the time tweeted
         twtwords = data[x]["text"]
         if twt in twtwords:
             text_lst.append(twtwords)
             create_lst.append(data[x]["created_at"])
-    if len(text_lst)>=5:
+    if len(text_lst)>=5: ## Printing 5 tweets with the term
         for y in range(5):
             print("TEXT: " + text_lst[y])
             print("CREATED AT: " + create_lst[y] + "\n")
-    if len(text_lst) < 5:
+    if len(text_lst) < 5: ## If there are less than 5 tweets, print the amount of times as there are tweets
         for z in range(len(text_lst)):
             print("TEXT: " + text_lst[z])
             print("CREATED AT: " + create_lst[z] + "\n")
-    del text_lst[:]
+    del text_lst[:] ## Clearing the list so you can search tweets to your heart's content
 
 ## 4. With what you learn from the data -- e.g. how exactly to find the
 ##		text of each tweet in the big nested structure -- write code to print out
